@@ -1,0 +1,41 @@
+{
+    "name": "traveller-guide",
+    "version": "1.0.0",
+    "main": "dist/server.js",
+    "license": "MIT",
+    "scripts": {
+        "watch": "tsc --watch",
+        "start:dev": "nodemon dist/server.js"
+    },
+    "dependencies": {
+        "@prisma/client": "^6.16.2",
+        "body-parser": "^2.2.0",
+        "cloudinary": "^2.7.0",
+        "compression": "^1.8.1",
+        "cookie-parser": "^1.4.7",
+        "cors": "^2.8.5",
+        "dayjs": "^1.11.18",
+        "dotenv": "^17.2.2",
+        "express": "^4.21.2",
+        "express-rate-limit": "^8.1.0",
+        "helmet": "^8.1.0",
+        "http-status": "^2.1.0",
+        "morgan": "^1.10.1",
+        "multer": "^2.0.2",
+        "pino": "^9.11.0",
+        "prisma": "^6.16.2"
+    },
+    "devDependencies": {
+        "@types/compression": "^1.8.1",
+        "@types/cookie-parser": "^1.4.9",
+        "@types/cors": "^2.8.19",
+        "@types/express": "^5.0.3",
+        "@types/express-rate-limit": "^6.0.2",
+        "@types/morgan": "^1.9.10",
+        "@types/multer": "^2.0.0",
+        "@types/node": "^24.5.2",
+        "nodemon": "^3.1.10",
+        "pino-pretty": "^13.1.1",
+        "typescript": "^5.9.2"
+    }
+}
