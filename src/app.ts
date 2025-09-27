@@ -84,7 +84,9 @@ const setupParsingMiddlewares = (app: Express) => {
     app.use(cookieParser());
 };
 
-const setupCustomMiddlewares = (app: Express) => {};
+const setupCustomMiddlewares = (app: Express) => {
+    app.use();
+};
 
 // Setup routes
 const setupRoutes = (app: Express) => {

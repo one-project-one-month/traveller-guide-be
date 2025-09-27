@@ -5,6 +5,7 @@ export const loginHandler = async (
     res: Response,
     next: NextFunction
 ) => {
+    console.log(req, res, next);
     // check user
     // reject if not exits
     // generate jwts
@@ -16,6 +17,7 @@ export const relgisterHandler = async (
     res: Response,
     next: NextFunction
 ) => {
+    console.log(req, res, next);
     // check if user exits
     // reject if exits
     // create user
