@@ -8,6 +8,7 @@
         "start:dev": "nodemon dist/server.js"
     },
     "dependencies": {
+        "@neondatabase/serverless": "^1.0.1",
         "@prisma/client": "^6.16.2",
         "body-parser": "^2.2.0",
         "cloudinary": "^2.7.0",
