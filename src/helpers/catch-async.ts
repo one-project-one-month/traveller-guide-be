@@ -21,4 +21,4 @@ const catchAsyncError = (
     };
 };
 
-export default catchAsyncError;
+export { catchAsyncError as catchAsync };

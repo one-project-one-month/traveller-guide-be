@@ -1,4 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
+import logger from '../utils/logger';
+import { SYSTEM_MESSAGES } from '../constants/messages/system.messages';
+import { AppError } from '../helpers/app-error';
+import HTTP_STATUS from 'http-status';
 
 export const requestTimeout = (
     req: Request,
@@ -7,9 +11,14 @@ export const requestTimeout = (
 ) => {
     const timeout = setTimeout(() => {
         if (!res.headersSent) {
-            console.warn(`Request timeout for ${req.method} ${req.path}`);
+            logger.warn(`Request timeout for ${req.method} ${req.path}`);
 
-            res.status(408).json({ error: 'Request timeout' });
+            next(
+                new AppError(
+                    SYSTEM_MESSAGES.REQUEST_TIMEOUT,
+                    HTTP_STATUS.REQUEST_TIMEOUT
+                )
+            );
         }
     }, 30000);
 

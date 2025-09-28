@@ -24,4 +24,16 @@ export const serverConfig = {
     cloudinaryCloudName: process.env['CLOUDINARY_CLOUD_NAME'],
     cloudinaryApiKey: process.env['CLOUDINARY_API_KEY'],
     cloudinaryApiSecret: process.env['CLOUDINARY_API_SECRET'],
+
+    // JWT
+    jwtSecret: process.env['JWT_SECRET']!,
+    accessTokenTTL: process.env['JWT_ACCESS_TOKEN_TTL'] || '15m',
+    refreshTOkenTTL: process.env['JWT_REFRESH_TOKEN_TTL'] || '7d',
+    refreshTokenTTLMs:
+        Number(process.env['REFRESH_TOKEN_TTL_MS']) || 1000 * 60 * 60 * 24 * 7, // 7 days
+    tokenIssuer: process.env['TOKEN_ISSUER'] || 'turning-point',
+
+    // Cookie
+    cookieDomain: process.env['COOKIE_DOMAIN'] || 'localhost',
+    cookieSecure: Boolean(process.env['COOKIE_SECURE'] || true),
 };

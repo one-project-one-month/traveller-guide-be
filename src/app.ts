@@ -12,7 +12,7 @@ config();
 
 import { ROUTES } from './constants/routes.constant';
 import { serverConfig } from './configs/server.config';
-import { MESSAGES } from './constants/messages.constant';
+import { MESSAGES } from './constants/messages/messages.constant';
 import { requestTimeout } from './middlewares/request-timeout.middleware';
 import {
     authLimiter,
@@ -21,6 +21,7 @@ import {
 import { errorHandler } from './middlewares/error.middleware';
 import { corsMiddleware } from './middlewares/cors.middleware';
 import logger from './utils/logger';
+import authRouter from './routes/auth.routes';
 
 // App
 export const createApp = () => {
@@ -49,8 +50,8 @@ const setupSecurityMiddlewares = (app: Express) => {
     app.use(helmet());
 
     // Rate limiting
-    app.use(ROUTES.API.VERSION_V1 + ROUTES.AUTH.BASE, authLimiter);
-    app.use(ROUTES.API.VERSION_V1, generalLimiter);
+    app.use(ROUTES.API.V1 + ROUTES.AUTH.BASE, authLimiter);
+    app.use(ROUTES.API.V1, generalLimiter);
 
     // Cors policies
     app.options('*', corsMiddleware);
@@ -85,11 +86,15 @@ const setupParsingMiddlewares = (app: Express) => {
 };
 
 const setupCustomMiddlewares = (app: Express) => {
-    app.use();
+    console.log(typeof app);
 };
 
 // Setup routes
 const setupRoutes = (app: Express) => {
+    // TODO: create a version specific router (like v1Router)
+
+    app.use(ROUTES.API.V1 + ROUTES.AUTH.BASE, authRouter); // Auth router
+
     // 404 handler for undefiennd routes
     app.use('*', (req: Request, res: Response) => {
         res.status(HTTP_STATUS.BAD_REQUEST).json({
