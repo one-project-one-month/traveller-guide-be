@@ -8,6 +8,7 @@ import { AppError } from '../helpers/app-error';
 import { serverConfig } from '../configs/server.config';
 import { AUTH_MESSAGES } from '../constants/messages/auth.messages';
 import HTTP_STATUS from 'http-status';
+import { RegisterInput } from '../validators/auth.scehma';
 
 /**
  * Signs and returns access and refresh JWTs for a given payload.
@@ -56,6 +57,7 @@ export const reIssueTokens = async (refreshToken: string) => {
         }
 
         // Remove password from payload
+        /* eslint-disable @typescript-eslint/no-unused-vars */
         const { password, ...payload } = user;
 
         // Generate new tokens
@@ -73,7 +75,7 @@ export const reIssueTokens = async (refreshToken: string) => {
  * Creates a new user and returns tokens and user payload.
  * Used for registration endpoint.
  */
-export const createUserWithTokens = async (userData: any) => {
+export const createUserWithTokens = async (userData: RegisterInput) => {
     // Only allow expected fields to be passed to user creation
     const { name, email, password } = userData;
 

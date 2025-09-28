@@ -18,7 +18,7 @@ export const validate =
             });
 
             next();
-        } catch (error: any) {
+        } catch (error: unknown) {
             next(error);
         }
     };

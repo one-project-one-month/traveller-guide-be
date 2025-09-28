@@ -13,7 +13,7 @@ import { AUTH_MESSAGES } from '../constants/messages/auth.messages';
  * Logs registration event for auditing.
  */
 export const registerHandler = catchAsync(
-    async (req: Request, res: Response, next: NextFunction) => {
+    async (req: Request, res: Response) => {
         const {
             accessToken,
             refreshToken,
@@ -37,38 +37,33 @@ export const registerHandler = catchAsync(
  * Logs in a user, sets refresh token cookie, and returns tokens and user payload.
  * Logs login event for auditing.
  */
-export const loginHandler = catchAsync(
-    async (req: Request, res: Response, next: NextFunction) => {
-        const {
-            accessToken,
-            refreshToken,
-            user: payload,
-        } = await authService.validateUserCredentials(
-            req.body.email,
-            req.body.password
-        );
+export const loginHandler = catchAsync(async (req: Request, res: Response) => {
+    const {
+        accessToken,
+        refreshToken,
+        user: payload,
+    } = await authService.validateUserCredentials(
+        req.body.email,
+        req.body.password
+    );
 
-        res.cookie('refresh_token', refreshToken, {
-            httpOnly: true,
-            domain: serverConfig.cookieDomain,
-            path: '/',
-            sameSite: 'strict',
-            secure: serverConfig.cookieSecure,
-            maxAge: serverConfig.refreshTokenTTLMs,
-        });
+    res.cookie('refresh_token', refreshToken, {
+        httpOnly: true,
+        domain: serverConfig.cookieDomain,
+        path: '/',
+        sameSite: 'strict',
+        secure: serverConfig.cookieSecure,
+        maxAge: serverConfig.refreshTokenTTLMs,
+    });
 
-        res.status(201).json({
-            accessToken,
-            refreshToken,
-            user: payload,
-        });
+    res.status(201).json({
+        accessToken,
+        refreshToken,
+        user: payload,
+    });
 
-        logger.info(
-            { userId: payload.id, email: payload.email },
-            'User logged in'
-        );
-    }
-);
+    logger.info({ userId: payload.id, email: payload.email }, 'User logged in');
+});
 
 /**
  * Issues a new access token (and refresh token if needed) from a valid refresh token.

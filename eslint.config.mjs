@@ -14,9 +14,9 @@ export default [
                 ...globals.es2021,
                 ...globals.node,
             },
-            rules: {
-                '@typescript-eslint/no-explicit-any': 'off',
-            },
+            // rules: {
+            //     '@typescript-eslint/no-explicit-any': 'off',
+            // },
         },
     },
 

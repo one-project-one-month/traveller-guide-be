@@ -6,7 +6,8 @@
     "scripts": {
         "watch": "tsc --watch",
         "start:dev": "nodemon dist/server.js",
-        "lint": "eslint . --ext .ts,.tsx,.js,.mjs"
+        "lint": "eslint . --ext .ts,.tsx,.js,.mjs",
+        "build": "npm run lint && tsc"
     },
     "dependencies": {
         "@neondatabase/serverless": "^1.0.1",

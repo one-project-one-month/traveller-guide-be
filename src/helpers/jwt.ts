@@ -18,10 +18,10 @@ export const jwtVerify = (token: string) => {
             expired: false,
             decoded,
         };
-    } catch (error: any) {
+    } catch (error: unknown) {
         return {
             valid: false,
-            expired: error.message === AUTH_MESSAGES.JWT_EXPEIRED,
+            expired: (error as Error).message === AUTH_MESSAGES.JWT_EXPEIRED,
             decoded: null,
         };
     }

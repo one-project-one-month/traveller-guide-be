@@ -32,5 +32,5 @@ export const loginSchema = object({
     }),
 });
 
-export type RegisterInput = TypeOf<typeof registerSchema>;
-export type LoginInput = TypeOf<typeof loginSchema>;
+export type RegisterInput = TypeOf<typeof registerSchema>['body'];
+export type LoginInput = TypeOf<typeof loginSchema>['body'];

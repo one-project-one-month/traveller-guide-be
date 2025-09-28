@@ -179,9 +179,10 @@ const sendProd = (err: AppError, res: Response) => {
 // Main error handler
 export const errorHandler = (
     err: KnownError,
-    _: Request,
+    _req: Request,
     res: Response,
-    __: NextFunction
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    _next: NextFunction
 ) => {
     logger.error(
         { name: err.name, message: err.message },
