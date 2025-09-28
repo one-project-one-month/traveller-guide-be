@@ -12,7 +12,6 @@ config();
 
 import { ROUTES } from './constants/routes.constant';
 import { serverConfig } from './configs/server.config';
-import { MESSAGES } from './constants/messages/messages.constant';
 import { requestTimeout } from './middlewares/request-timeout.middleware';
 import {
     authLimiter,
@@ -22,6 +21,8 @@ import { errorHandler } from './middlewares/error.middleware';
 import { corsMiddleware } from './middlewares/cors.middleware';
 import logger from './utils/logger';
 import authRouter from './routes/auth.routes';
+import { STATUS_MESSAGES } from './constants/messages/status.messages';
+import { SYSTEM_MESSAGES } from './constants/messages/system.messages';
 
 // App
 export const createApp = () => {
@@ -98,8 +99,8 @@ const setupRoutes = (app: Express) => {
     // 404 handler for undefiennd routes
     app.use('*', (req: Request, res: Response) => {
         res.status(HTTP_STATUS.BAD_REQUEST).json({
-            status: MESSAGES.STATUS.ERROR,
-            message: MESSAGES.SYSTEM.ROUTE_NOT_FOUND,
+            status: STATUS_MESSAGES.ERROR,
+            message: SYSTEM_MESSAGES.ROUTE_NOT_FOUND,
             data: {
                 path: req.originalUrl,
                 method: req.method,
@@ -121,21 +122,21 @@ const setupHealthChecks = (app: Express) => {
             // Add more services check...
 
             res.status(HTTP_STATUS.OK).json({
-                status: MESSAGES.STATUS.SUCCESS,
+                status: STATUS_MESSAGES.SUCCESS,
                 data: {
                     ready: true,
                     timestamp: new Date().toISOString(),
                     services: {
-                        database: MESSAGES.STATUS.CONNECTED,
+                        database: STATUS_MESSAGES.CONNECTED,
                         // Add other services status...
                     },
                 },
             });
         } catch (error) {
-            console.warn(`${MESSAGES.SYSTEM.READINESS_FAILED}:`, error);
+            console.warn(`${SYSTEM_MESSAGES.READINESS_FAILED}:`, error);
 
             res.status(HTTP_STATUS.SERVICE_UNAVAILABLE).json({
-                status: MESSAGES.STATUS.ERROR,
+                status: STATUS_MESSAGES.ERROR,
                 message: HTTP_STATUS[503],
             });
         }
