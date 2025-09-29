@@ -1,0 +1,56 @@
+openapi: 3.0.0
+info:
+    title: Turning Point API
+    version: 1.0.0
+    description: API documentation for Turning Point
+
+servers:
+    - url: http://localhost:4000
+      description: Development server
+
+# Import all path files
+paths:
+    # Auth endpoints
+    /auth/register:
+        $ref: './paths/auth.yaml#/register'
+    /auth/login:
+        $ref: './paths/auth.yaml#/login'
+    /auth/refresh:
+        $ref: './paths/auth.yaml#/refresh'
+
+    # User endpoints (example for scaling)
+    /users:
+        $ref: './paths/users.yaml#/getUsers'
+    /users/{id}:
+        $ref: './paths/users.yaml#/getUserById'
+
+components:
+    # Import component schemas
+    schemas:
+        # Auth schemas
+        RegisterRequest:
+            $ref: './components/schemas/auth.yaml#/RegisterRequest'
+        LoginRequest:
+            $ref: './components/schemas/auth.yaml#/LoginRequest'
+        AuthResponse:
+            $ref: './components/schemas/auth.yaml#/AuthResponse'
+
+        # Common schemas
+        User:
+            $ref: './components/schemas/user.yaml#/User'
+        ApiError:
+            $ref: './components/schemas/common.yaml#/ApiError'
+
+    # Reusable parameters
+    parameters:
+        PageParam:
+            $ref: './components/parameters/common.yaml#/PageParam'
+        LimitParam:
+            $ref: './components/parameters/common.yaml#/LimitParam'
+
+    # Standard responses
+    responses:
+        NotFound:
+            $ref: './components/responses/common.yaml#/NotFound'
+        Unauthorized:
+            $ref: './components/responses/common.yaml#/Unauthorized'

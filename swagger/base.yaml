@@ -1,0 +1,185 @@
+openapi: 3.1.0
+info:
+    title: Turning Point API
+    version: 1.0.0
+    description: API documentation for Turning Point
+
+servers:
+    - url: https://turning-point-be.on.shiper.app/api/v1
+      description: Development server
+    - url: http://localhost:4000/api/v1
+      description: Local server
+
+components:
+    securitySchemes:
+        bearerAuth:
+            type: http
+            scheme: bearer
+            bearerFormat: JWT
+
+    parameters:
+        AccessTokenHeader:
+            in: header
+            name: x-access-token
+            required: true
+            schema:
+                type: string
+            example: 'validAccessTokenHere'
+
+        PageParam:
+            name: page
+            in: query
+            description: Page number for pagination
+            schema:
+                type: integer
+                minimum: 1
+                default: 1
+
+        LimitParam:
+            name: limit
+            in: query
+            description: Number of items per page
+            schema:
+                type: integer
+                minimum: 1
+                maximum: 100
+                default: 20
+
+    schemas:
+        # Common schemas used across all modules
+        # PaginationInfo:
+        #     type: object
+        #     properties:
+        #         currentPage:
+        #             type: integer
+        #             example: 1
+        #         totalPages:
+        #             type: integer
+        #             example: 10
+        #         totalItems:
+        #             type: integer
+        #             example: 200
+        #         itemsPerPage:
+        #             type: integer
+        #             example: 20
+
+        # ApiError:
+        #     type: object
+        #     properties:
+        #         status:
+        #             type: string
+        #             example: 'error'
+        #         message:
+        #             type: string
+        #             example: 'An error occurred'
+        #         code:
+        #             type: string
+        #             example: 'VALIDATION_ERROR'
+        #         errors:
+        #             type: array
+        #             items:
+        #                 type: object
+        #                 properties:
+        #                     field:
+        #                         type: string
+        #                         example: 'email'
+        #                     message:
+        #                         type: string
+        #                         example: 'Email is required'
+
+        BaseResponse:
+            type: object
+            properties:
+                status:
+                    type: string
+                    enum: [success, fail, error]
+                    example: 'success'
+                message:
+                    type: string
+                    example: 'Operation completed successfully'
+
+    responses:
+        BadRequest:
+            description: Bad request - Invalid input data
+            content:
+                application/json:
+                    schema:
+                        allOf:
+                            - $ref: '#/components/schemas/BaseResponse'
+                            - type: object
+                              properties:
+                                  status:
+                                      example: 'fail'
+                                  message:
+                                      example: 'Validation failed: passwordConfirmation: Password Confirmation is required'
+                                  data:
+                                      type: object
+                                      example: {}
+
+        Unauthorized:
+            description: Unauthorized - Authentication required
+            content:
+                application/json:
+                    schema:
+                        allOf:
+                            - $ref: '#/components/schemas/BaseResponse'
+                            - type: object
+                              properties:
+                                  status:
+                                      example: 'error'
+                                  message:
+                                      example: 'Authentication required'
+                                  code:
+                                      type: string
+                                      example: 'UNAUTHORIZED'
+
+        Forbidden:
+            description: Forbidden - Insufficient permissions
+            content:
+                application/json:
+                    schema:
+                        allOf:
+                            - $ref: '#/components/schemas/BaseResponse'
+                            - type: object
+                              properties:
+                                  status:
+                                      example: 'error'
+                                  message:
+                                      example: 'Insufficient permissions'
+                                  code:
+                                      type: string
+                                      example: 'FORBIDDEN'
+
+        NotFound:
+            description: Resource not found
+            content:
+                application/json:
+                    schema:
+                        allOf:
+                            - $ref: '#/components/schemas/BaseResponse'
+                            - type: object
+                              properties:
+                                  status:
+                                      example: 'error'
+                                  message:
+                                      example: 'Resource not found'
+                                  code:
+                                      type: string
+                                      example: 'NOT_FOUND'
+
+        InternalServerError:
+            description: Internal server error
+            content:
+                application/json:
+                    schema:
+                        allOf:
+                            - $ref: '#/components/schemas/BaseResponse'
+                            - type: object
+                              properties:
+                                  status:
+                                      example: 'error'
+                                  message:
+                                      example: 'Internal server error'
+                                  code:
+                                      type: string
+                                      example: 'INTERNAL_ERROR'

@@ -7,7 +7,7 @@ export const AUTH_MESSAGES = {
     REGISTRATION_SUCCESS: 'Account created successfully',
     PASSWORD_RESET_SUCCESS: 'Password reset successfully',
     EMAIL_VERIFIED: 'Email verified successfully',
-    TOKEN_REFRESHED: 'Access token refreshed successfully',
+    TOKEN_REFRESHED: 'Tokens refreshed successfully',
 
     // Error Messages
     INVALID_CREDENTIALS: 'Invalid email or password',
@@ -17,7 +17,7 @@ export const AUTH_MESSAGES = {
     TOKEN_INVALID: 'Invalid or malformed token',
     TOKEN_MISSING: 'Access token is required',
     REFRESH_TOKEN_MISSING: 'Refresh token is missing',
-    REFRESH_TOKEN_INVALID: 'Invalid refresh token',
+    REFRESH_TOKEN_INVALID: 'Invalid or expired refresh token',
     EMAIL_NOT_VERIFIED: 'Please verify your email address before logging in',
     ACCOUNT_LOCKED:
         'Account has been temporarily locked due to multiple failed login attempts',

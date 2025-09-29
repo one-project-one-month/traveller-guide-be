@@ -1,0 +1,158 @@
+# Authentication endpoints
+'/auth/register':
+    post:
+        summary: Register a new user
+        description: Create a new user account with name, email and password
+        tags: [Authentication]
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/RegisterRequest'
+                    examples:
+                        valid_request:
+                            summary: Valid registration request
+                            value:
+                                name: 'John Doe'
+                                email: 'john.doe@example.com'
+                                password: 'Password123'
+                                passwordConfirmation: 'Password123'
+        responses:
+            '201':
+                description: User created successfully
+                content:
+                    application/json:
+                        # schema:
+                        #     $ref: '#/components/schemas/AuthResponse'
+                        examples:
+                            success_response:
+                                summary: Successful registration
+                                value:
+                                    status: 'success'
+                                    message: 'Account created successfully'
+                                    data:
+                                        accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+                                        refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+                                        user:
+                                            id: '1'
+                                            email: 'john.doe@example.com'
+                                            name: 'John Doe'
+                                            profile_photo: null
+                                            is_active: true
+                                            created_at: '2025-09-28T13:26:38.884Z'
+                                            updated_at: '2025-09-28T13:26:38.884Z'
+
+            '400':
+                $ref: '#/components/responses/BadRequest'
+            '409':
+                description: Email already exists
+                content:
+                    application/json:
+                        # schema:
+                        #     $ref: '#/components/schemas/ApiError'
+                        examples:
+                            email_exists:
+                                summary: Email already registered
+                                value:
+                                    status: 'fail'
+                                    message: 'Duplicate value(s): email'
+                                    data: {}
+
+'/auth/login':
+    post:
+        summary: Login user
+        description: Authenticate user with email and password
+        tags: [Authentication]
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/LoginRequest'
+                    examples:
+                        valid_login:
+                            summary: Valid login request
+                            value:
+                                email: 'john.doe@example.com'
+                                password: 'Password123'
+        responses:
+            '200':
+                description: Login successful
+                content:
+                    application/json:
+                        # schema:
+                        #     $ref: '#/components/schemas/AuthResponse'
+                        examples:
+                            success_login:
+                                summary: Successful login
+                                value:
+                                    status: 'success'
+                                    message: 'Login successful'
+                                    data:
+                                        accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+                                        refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+                                        user:
+                                            id: '1'
+                                            email: 'john.doe@example.com'
+                                            name: 'John Doe'
+                                            profile_photo: null
+                                            is_active: true
+                                            created_at: '2025-09-28T13:26:38.884Z'
+                                            updated_at: '2025-09-28T13:26:38.884Z'
+            '400':
+                description: Invalid credentials
+                content:
+                    application/json:
+                        # schema:
+                        #     $ref: '#/components/schemas/ApiError'
+                        examples:
+                            invalid_credentials:
+                                summary: Wrong email or password
+                                value:
+                                    status: 'fail'
+                                    message: 'Invalid email or password'
+                                    data: {}
+
+'/auth/refresh':
+    post:
+        summary: Refresh access token
+        description: Generate new tokens using refresh token
+        tags: [Authentication]
+        parameters:
+            - in: header
+              name: 'x-refresh-token'
+              required: true
+              schema:
+                  type: string
+              example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+        responses:
+            '200':
+                description: Token refreshed successfully
+                content:
+                    application/json:
+                        # schema:
+                        #     $ref: '#/components/schemas/AuthResponse'
+                        examples:
+                            token_refreshed:
+                                summary: Successfully refreshed tokens
+                                value:
+                                    status: 'success'
+                                    message: 'Tokens refreshed successfully'
+                                    data:
+                                        accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+                                        refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+
+            '401':
+                description: Invalid or expired refresh token
+                content:
+                    application/json:
+                        # schema:
+                        #     $ref: '#/components/schemas/ApiError'
+                        examples:
+                            invalid_refresh_token:
+                                summary: Invalid refresh token
+                                value:
+                                    status: 'fail'
+                                    message: 'Invalid or expired refresh token'
+                                    data: {}

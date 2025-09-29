@@ -96,7 +96,7 @@ const handlePrismaClientKnownRequestError = (err: PrismaError): AppError => {
                 (Array.isArray(err.meta['target'])
                     ? err.meta['target'].join(', ')
                     : String(err.meta['target'])),
-            HTTP_STATUS.BAD_REQUEST
+            HTTP_STATUS.CONFLICT
         );
     }
 

@@ -7,6 +7,7 @@ import logger from '../utils/logger';
 import { serverConfig } from '../configs/server.config';
 import { AppError } from '../helpers/app-error';
 import { AUTH_MESSAGES } from '../constants/messages/auth.messages';
+import { STATUS_MESSAGES } from '../constants/messages/status.messages';
 
 /**
  * Registers a new user and returns tokens and user payload.
@@ -20,10 +21,14 @@ export const registerHandler = catchAsync(
             user: payload,
         } = await authService.createUserWithTokens(req.body);
 
-        res.status(201).json({
-            accessToken,
-            refreshToken,
-            user: payload,
+        res.status(HTTP_STATUS.CREATED).json({
+            status: STATUS_MESSAGES.SUCCESS,
+            message: AUTH_MESSAGES.REGISTRATION_SUCCESS,
+            data: {
+                accessToken,
+                refreshToken,
+                user: payload,
+            },
         });
 
         logger.info(
@@ -56,10 +61,14 @@ export const loginHandler = catchAsync(async (req: Request, res: Response) => {
         maxAge: serverConfig.refreshTokenTTLMs,
     });
 
-    res.status(201).json({
-        accessToken,
-        refreshToken,
-        user: payload,
+    res.status(HTTP_STATUS.OK).json({
+        status: STATUS_MESSAGES.SUCCESS,
+        message: AUTH_MESSAGES.LOGIN_SUCCESS,
+        data: {
+            accessToken,
+            refreshToken,
+            user: payload,
+        },
     });
 
     logger.info({ userId: payload.id, email: payload.email }, 'User logged in');
@@ -105,5 +114,9 @@ export const refreshTokensHandler = async (
         });
     }
 
-    return res.json(newTokens);
+    return res.status(HTTP_STATUS.OK).json({
+        status: STATUS_MESSAGES.SUCCESS,
+        message: AUTH_MESSAGES.TOKEN_REFRESHED,
+        data: { ...newTokens },
+    });
 };

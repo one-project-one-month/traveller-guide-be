@@ -7,6 +7,7 @@ import compression from 'compression';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import HTTP_STATUS from 'http-status';
+import swaggerUi from 'swagger-ui-express';
 
 config();
 
@@ -23,6 +24,7 @@ import logger from './utils/logger';
 import authRouter from './routes/auth.routes';
 import { STATUS_MESSAGES } from './constants/messages/status.messages';
 import { SYSTEM_MESSAGES } from './constants/messages/system.messages';
+import { specs } from './lib/swagger';
 
 // App
 export const createApp = () => {
@@ -38,6 +40,8 @@ export const createApp = () => {
     // Routes
     setupRoutes(app);
     setupHealthChecks(app);
+
+    setup404Handler(app);
 
     // Error handler
     app.use(errorHandler);
@@ -94,9 +98,12 @@ const setupCustomMiddlewares = (app: Express) => {
 const setupRoutes = (app: Express) => {
     // TODO: create a version specific router (like v1Router)
 
-    app.use(ROUTES.API.V1 + ROUTES.AUTH.BASE, authRouter); // Auth router
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
-    // 404 handler for undefiennd routes
+    app.use(ROUTES.API.V1 + ROUTES.AUTH.BASE, authRouter); // Auth router
+};
+
+const setup404Handler = (app: Express) => {
     app.use('*', (req: Request, res: Response) => {
         res.status(HTTP_STATUS.BAD_REQUEST).json({
             status: STATUS_MESSAGES.ERROR,

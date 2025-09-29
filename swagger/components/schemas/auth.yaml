@@ -1,0 +1,45 @@
+# Authentication related schemas
+
+RegisterRequest:
+    type: object
+    required:
+        - name
+        - email
+        - password
+        - passwordConfirmation
+    properties:
+        name:
+            type: string
+            example: 'John Doe'
+            description: "User's name"
+        email:
+            type: string
+            format: email
+            example: 'user@example.com'
+            description: "User's email address"
+        password:
+            type: string
+            minLength: 8
+            pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$"
+            example: 'Password123'
+            description: 'Password must contain at least 8 characters with uppercase, lowercase and number'
+        passwordConfirmation:
+            type: string
+            example: 'Password123'
+            description: 'Must match the password field'
+
+LoginRequest:
+    type: object
+    required:
+        - email
+        - password
+    properties:
+        email:
+            type: string
+            format: email
+            example: 'user@example.com'
+            description: 'Registered email address'
+        password:
+            type: string
+            example: 'Password123'
+            description: "User's password"
