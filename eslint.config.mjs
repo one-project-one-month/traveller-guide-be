@@ -1,11 +1,21 @@
 import globals from 'globals';
 import pluginJs from '@eslint/js';
 import tseslint from 'typescript-eslint';
+import importPlugin from 'eslint-plugin-import';
+import prettier from 'eslint-config-prettier';
 
 export default [
-    // Ignores
+    // Ignore patterns
     {
-        ignores: ['dist/**', 'node_modules/**', 'src/generated/**'],
+        ignores: [
+            'dist/**',
+            'node_modules/**',
+            'src/generated/**',
+            'coverage/**',
+            '*.js',
+            '*.d.ts',
+            'prisma/migrations/**',
+        ],
     },
 
     {
@@ -24,16 +34,91 @@ export default [
     pluginJs.configs.recommended,
 
     // Typescript recommended rules
-    ...tseslint.configs.recommended,
+    ...tseslint.configs.recommendedTypeChecked, // ESLint uses your tsconfig.json
 
-    // Overrides
+    // Custom configs / overrides
     {
-        files: ['.eslintrc.js', 'eslint.config.*'],
+        files: ['src/**/**/*.ts', 'esling.confg.mjs'],
         languageOptions: {
-            sourceType: 'script',
+            parserOptions: {
+                projectService: true,
+                tsconfigRootDir: import.meta.dirname,
+            },
             globals: {
                 ...globals.node,
+                ...globals.es2024,
             },
         },
+        plugins: {
+            import: importPlugin,
+        },
+        rules: {
+            // TypeScript specific
+            '@typescript-eslint/no-explicit-any': 'warn',
+            '@typescript-eslint/explicit-function-return-type': 'off',
+            '@typescript-eslint/explicit-module-boundary-types': 'off',
+            '@typescript-eslint/no-unused-vars': [
+                'error',
+                {
+                    argsIgnorePattern: '^_',
+                    varsIgnorePattern: '^_',
+                },
+            ],
+            '@typescript-eslint/no-floating-promises': 'error',
+            '@typescript-eslint/no-misused-promises': [
+                'error',
+                {
+                    checksVoidReturn: {
+                        attributes: false,
+                    },
+                },
+            ],
+            '@typescript-eslint/await-thenable': 'error',
+            '@typescript-eslint/consistent-type-imports': [
+                'error',
+                {
+                    prefer: 'type-imports',
+                    fixStyle: 'inline-type-imports',
+                },
+            ],
+            '@typescript-eslint/no-import-type-side-effects': 'error',
+
+            // Import organization
+            'import/order': [
+                'error',
+                {
+                    groups: [
+                        'builtin',
+                        'external',
+                        'internal',
+                        'parent',
+                        'sibling',
+                        'index',
+                    ],
+                    'newlines-between': 'always',
+                    alphabetize: {
+                        order: 'asc',
+                        caseInsensitive: true,
+                    },
+                },
+            ],
+            'import/no-duplicates': ['error', { 'prefer-inline': true }],
+            'import/no-unresolved': 'off',
+
+            // General best practices
+            'no-console': ['warn', { allow: ['warn', 'error'] }],
+            'no-debugger': 'error',
+            'prefer-const': 'error',
+            'no-var': 'error',
+            'object-shorthand': 'error',
+            'prefer-template': 'error',
+            'prefer-arrow-callback': 'error',
+            'arrow-body-style': ['error', 'as-needed'],
+            eqeqeq: ['error', 'always'],
+            'no-duplicate-imports': 'error',
+        },
     },
+
+    // Prettier (must be last)
+    prettier,
 ];

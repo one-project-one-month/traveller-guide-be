@@ -1,30 +1,31 @@
-import express, { Request, Response, type Express } from 'express';
-import morgan from 'morgan';
-import { config } from 'dotenv';
 import { createServer } from 'http';
-import helmet from 'helmet';
-import compression from 'compression';
+
 import bodyParser from 'body-parser';
+import compression from 'compression';
 import cookieParser from 'cookie-parser';
+import { config } from 'dotenv';
+import express, { type Request, type Response, type Express } from 'express';
+import helmet from 'helmet';
 import HTTP_STATUS from 'http-status';
+import morgan from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 
 config();
 
-import { ROUTES } from './constants/routes.constant';
 import { serverConfig } from './configs/server.config';
-import { requestTimeout } from './middlewares/request-timeout.middleware';
+import { STATUS_MESSAGES } from './constants/messages/status.messages';
+import { SYSTEM_MESSAGES } from './constants/messages/system.messages';
+import { ROUTES } from './constants/routes.constant';
+import { specs } from './lib/swagger';
+import { corsMiddleware } from './middlewares/cors.middleware';
+import { errorHandler } from './middlewares/error.middleware';
 import {
     authLimiter,
     generalLimiter,
 } from './middlewares/rate-limit.middleware';
-import { errorHandler } from './middlewares/error.middleware';
-import { corsMiddleware } from './middlewares/cors.middleware';
-import logger from './utils/logger';
+import { requestTimeout } from './middlewares/request-timeout.middleware';
 import authRouter from './routes/auth.routes';
-import { STATUS_MESSAGES } from './constants/messages/status.messages';
-import { SYSTEM_MESSAGES } from './constants/messages/system.messages';
-import { specs } from './lib/swagger';
+import logger from './utils/logger';
 
 // App
 export const createApp = () => {
