@@ -98,7 +98,7 @@ const setupCustomMiddlewares = (app: Express) => {
 const setupRoutes = (app: Express) => {
     // TODO: create a version specific router (like v1Router)
 
-    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+    app.use(ROUTES.API_DOCS, swaggerUi.serve, swaggerUi.setup(specs));
 
     app.use(ROUTES.API.V1 + ROUTES.AUTH.BASE, authRouter); // Auth router
 };

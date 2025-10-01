@@ -2,6 +2,7 @@ export const ROUTES = {
     // health and system
     HEALTH: 'health',
     READY: '/ready',
+    API_DOCS: '/api-docs',
 
     // base API paths
     API: {
