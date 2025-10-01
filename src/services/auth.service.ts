@@ -1,14 +1,15 @@
 import { get } from 'lodash';
-import logger from '../utils/logger';
+import HTTP_STATUS from 'http-status';
 import type { StringValue } from 'ms';
 import bcrypt from 'bcryptjs';
+
+import logger from '../utils/logger';
 import { jwtSign, jwtVerify } from '../helpers/jwt';
-import { prisma } from '../lib/prisma';
 import { AppError } from '../helpers/app-error';
 import { serverConfig } from '../configs/server.config';
 import { AUTH_MESSAGES } from '../constants/messages/auth.messages';
-import HTTP_STATUS from 'http-status';
 import { RegisterInput } from '../validators/auth.scehma';
+import { userRepository } from '../repositories/user.repository';
 
 /**
  * Signs and returns access and refresh JWTs for a given payload.
@@ -48,9 +49,7 @@ export const reIssueTokens = async (refreshToken: string) => {
     }
 
     try {
-        const user = await prisma.user.findUnique({
-            where: { id: userId },
-        });
+        const user = await userRepository.findUserById(userId);
 
         if (!user) {
             return false;
@@ -83,12 +82,10 @@ export const createUserWithTokens = async (userData: RegisterInput) => {
     const saltRounds = 12;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    const user = await prisma.user.create({
-        data: {
-            name,
-            email,
-            password: hashedPassword,
-        },
+    const user = await userRepository.createUser({
+        name,
+        email,
+        password: hashedPassword,
     });
 
     // Remove password from payload
@@ -107,9 +104,7 @@ export const validateUserCredentials = async (
     password: string
 ) => {
     try {
-        const user = await prisma.user.findUnique({
-            where: { email },
-        });
+        const user = await userRepository.findUserByEmail(email);
 
         if (!user) {
             throw new AppError(
