@@ -1,17 +1,24 @@
 import jwt from 'jsonwebtoken';
+
 import { serverConfig } from '../configs/server.config';
 import { AUTH_MESSAGES } from '../constants/messages/auth.messages';
 
-export const jwtSign = (paylaod: object, options: jwt.SignOptions) => {
-    return jwt.sign(paylaod, serverConfig.jwtSecret, {
+export type DecodedToken = jwt.JwtPayload;
+
+export const jwtSign = (payload: object, options: jwt.SignOptions) =>
+    jwt.sign(payload, serverConfig.jwtSecret, {
         ...options,
         issuer: serverConfig.tokenIssuer,
     });
-};
 
-export const jwtVerify = (token: string) => {
+export const jwtVerify = (
+    token: string
+): { valid: boolean; expired: boolean; decoded: DecodedToken | null } => {
     try {
-        const decoded = jwt.verify(token, serverConfig.jwtSecret);
+        const decoded = jwt.verify(
+            token,
+            serverConfig.jwtSecret
+        ) as jwt.JwtPayload;
 
         return {
             valid: true,

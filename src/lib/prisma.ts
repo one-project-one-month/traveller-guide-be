@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+
 import logger from '../utils/logger';
 
 export const prisma = new PrismaClient({
@@ -10,8 +11,8 @@ export const prisma = new PrismaClient({
 
 // Graceful shutdown
 // TODO: align with existing server's graceful shutdown logic
-process.on('SIGINT', async () => {
-    logger.info('Disconnectin prisma...');
+process.on('SIGINT', () => {
+    logger.info('Disconnecting prisma...');
 
-    await prisma.$disconnect();
+    void prisma.$disconnect();
 });

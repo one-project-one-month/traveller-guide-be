@@ -1,15 +1,14 @@
-import { get } from 'lodash';
+import bcrypt from 'bcryptjs';
 import HTTP_STATUS from 'http-status';
 import type { StringValue } from 'ms';
-import bcrypt from 'bcryptjs';
 
-import logger from '../utils/logger';
-import { jwtSign, jwtVerify } from '../helpers/jwt';
-import { AppError } from '../helpers/app-error';
 import { serverConfig } from '../configs/server.config';
 import { AUTH_MESSAGES } from '../constants/messages/auth.messages';
-import { RegisterInput } from '../validators/auth.scehma';
+import { AppError } from '../helpers/app-error';
+import { jwtSign, jwtVerify } from '../helpers/jwt';
 import { userRepository } from '../repositories/user.repository';
+import logger from '../utils/logger';
+import type { RegisterInput } from '../validators/auth.scehma';
 
 /**
  * Signs and returns access and refresh JWTs for a given payload.
@@ -42,7 +41,8 @@ export const reIssueTokens = async (refreshToken: string) => {
         return false;
     }
 
-    const userId = get(decoded, 'id');
+    const rawId = decoded['id'] as unknown;
+    const userId = typeof rawId === 'number' ? rawId : Number(rawId);
 
     if (!userId) {
         return false;
@@ -76,7 +76,9 @@ export const reIssueTokens = async (refreshToken: string) => {
  */
 export const createUserWithTokens = async (userData: RegisterInput) => {
     // Only allow expected fields to be passed to user creation
-    const { name, email, password } = userData;
+    const name = String((userData as Record<string, unknown>)['name']);
+    const email = String((userData as Record<string, unknown>)['email']);
+    const password = String((userData as Record<string, unknown>)['password']);
 
     // Hash password before storing
     const saltRounds = 12;

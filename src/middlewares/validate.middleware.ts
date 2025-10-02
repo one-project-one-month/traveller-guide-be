@@ -1,5 +1,5 @@
-import { NextFunction, Response, Request } from 'express';
-import * as z from 'zod';
+import type { NextFunction, Response, Request } from 'express';
+import type * as z from 'zod';
 
 // TODO: refactor, next(error) in catch clause might be wrong
 
@@ -8,13 +8,13 @@ import * as z from 'zod';
  * Returns 400 if validation fails.
  */
 export const validate =
-    (schema: z.ZodObject) =>
+    (schema: z.AnyZodObject) =>
     (req: Request, res: Response, next: NextFunction) => {
         try {
             schema.parse({
-                body: req.body,
-                query: req.query,
-                params: req.params,
+                body: req.body as unknown,
+                query: req.query as unknown,
+                params: req.params as unknown,
             });
 
             next();
