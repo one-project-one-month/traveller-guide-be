@@ -28,7 +28,10 @@ import authRouter from './routes/auth.routes';
 import logger from './utils/logger';
 
 // App
-export const createApp = () => {
+export const createApp = (): {
+    app: Express;
+    server: ReturnType<typeof createServer>;
+} => {
     const app = express();
     const server = createServer(app);
 
@@ -101,7 +104,7 @@ const setupRoutes = (app: Express) => {
 
     app.use(ROUTES.API_DOCS, swaggerUi.serve, swaggerUi.setup(specs));
 
-    app.use(ROUTES.API.V1 + ROUTES.AUTH.BASE, authRouter); // Auth router
+    app.use(ROUTES.API.V1 + ROUTES.AUTH.BASE, authRouter);
 };
 
 const setup404Handler = (app: Express) => {

@@ -10,7 +10,7 @@ import {
 import { validate } from '../middlewares/validate.middleware';
 import { loginSchema, registerSchema } from '../validators/auth.scehma';
 
-const authRouter = Router();
+const authRouter: Router = Router();
 
 authRouter.post(
     ROUTES.AUTH.REGISTER,
