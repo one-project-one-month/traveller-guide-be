@@ -1,14 +1,14 @@
-import { NextFunction, Response, Request } from 'express';
+import type { NextFunction, Response, Request } from 'express';
 import HTTP_STATUS from 'http-status';
 
+import { refreshTokenCookieConfig } from '../configs/cookie.config';
+import { AUTH_MESSAGES } from '../constants/messages/auth.messages';
+import { STATUS_MESSAGES } from '../constants/messages/status.messages';
+import { AppError } from '../helpers/app-error';
 import { catchAsync } from '../helpers/catch-async';
 import { reIssueTokens } from '../services/auth.service';
 import * as authService from '../services/auth.service';
 import logger from '../utils/logger';
-import { AppError } from '../helpers/app-error';
-import { AUTH_MESSAGES } from '../constants/messages/auth.messages';
-import { STATUS_MESSAGES } from '../constants/messages/status.messages';
-import { refreshTokenCookieConfig } from '../configs/cookie.config';
 
 /**
  * Registers a new user and returns tokens and user payload.
@@ -20,7 +20,14 @@ export const registerHandler = catchAsync(
             accessToken,
             refreshToken,
             user: payload,
-        } = await authService.createUserWithTokens(req.body);
+        } = await authService.createUserWithTokens(
+            req.body as {
+                name: string;
+                email: string;
+                password: string;
+                passwordConfirmation: string;
+            }
+        );
 
         res.status(HTTP_STATUS.CREATED).json({
             status: STATUS_MESSAGES.SUCCESS,
@@ -44,14 +51,12 @@ export const registerHandler = catchAsync(
  * Logs login event for auditing.
  */
 export const loginHandler = catchAsync(async (req: Request, res: Response) => {
+    const { email, password } = req.body as { email: string; password: string };
     const {
         accessToken,
         refreshToken,
         user: payload,
-    } = await authService.validateUserCredentials(
-        req.body.email,
-        req.body.password
-    );
+    } = await authService.validateUserCredentials(email, password);
 
     res.cookie('refresh_token', refreshToken, refreshTokenCookieConfig);
     res.status(HTTP_STATUS.OK).json({
@@ -110,3 +115,35 @@ export const refreshTokensHandler = async (
         data: { ...newTokens },
     });
 };
+
+/**
+ * Handles Google login, returns tokens and user payload.
+ */
+export const googleLoginHandler = catchAsync(
+    async (req: Request, res: Response) => {
+        const { idToken } = req.body as { idToken: string };
+
+        if (!idToken) {
+            throw new AppError(
+                'Google ID token is required',
+                HTTP_STATUS.BAD_REQUEST
+            );
+        }
+
+        const { accessToken, refreshToken, user } =
+            await authService.loginWithGoogle(idToken);
+
+        res.cookie('refresh_token', refreshToken, refreshTokenCookieConfig);
+
+        res.status(HTTP_STATUS.OK).json({
+            status: STATUS_MESSAGES.SUCCESS,
+            message: 'Login successful via Google',
+            data: { accessToken, refreshToken, user },
+        });
+
+        logger.info(
+            { userId: user.id, email: user.email },
+            'User logged in via Google'
+        );
+    }
+);

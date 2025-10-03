@@ -54,7 +54,7 @@ const startServer = () => {
         gracefulShutdown('uncaughtException');
     });
 
-    app.listen(port, async () => {
+    app.listen(port, () => {
         logger.info(`Server started at port ${port}...`);
     });
 

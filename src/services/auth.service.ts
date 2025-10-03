@@ -1,5 +1,7 @@
 import bcrypt from 'bcryptjs';
+import { OAuth2Client } from 'google-auth-library';
 import HTTP_STATUS from 'http-status';
+import { get } from 'lodash';
 import type { StringValue } from 'ms';
 
 import { serverConfig } from '../configs/server.config';
@@ -35,7 +37,9 @@ export const signJWTs = (payload: object) => {
 export const reIssueTokens = async (refreshToken: string) => {
     logger.info('Reissuing tokens...');
 
-    const { decoded } = jwtVerify(refreshToken);
+    const { decoded } = jwtVerify(refreshToken) as {
+        decoded: { id?: string } | null;
+    };
 
     if (!decoded) {
         return false;
@@ -49,7 +53,7 @@ export const reIssueTokens = async (refreshToken: string) => {
     }
 
     try {
-        const user = await userRepository.findUserById(userId);
+        const user = await userRepository.findUserById(Number(userId));
 
         if (!user) {
             return false;
@@ -138,4 +142,49 @@ export const validateUserCredentials = async (
             HTTP_STATUS.INTERNAL_SERVER_ERROR
         );
     }
+};
+
+// Initialize Google OAuth2 client
+const googleClient = new OAuth2Client(process.env['GOOGLE_CLIENT_ID']);
+
+/**
+ * Logs in or registers a user via Google ID token and returns JWTs.
+ */
+export const loginWithGoogle = async (idToken: string) => {
+    // Verify Google ID token
+    const ticket = await googleClient.verifyIdToken({
+        idToken,
+        audience: process.env['GOOGLE_CLIENT_ID'],
+    });
+    const payload = ticket.getPayload();
+
+    if (!payload?.email) {
+        throw new AppError('Google authentication failed', 400);
+    }
+
+    let user = await userRepository.findUserByGoogleId(payload.sub);
+
+    if (!user) {
+        user = await userRepository.findUserByEmail(payload.email);
+        if (user) {
+            // Link Google ID to existing account
+            user = await userRepository.updateUser(user.id, {
+                googleId: payload.sub,
+            });
+        } else {
+            // Create new user
+            user = await userRepository.createUser({
+                name: payload.name || (payload.email.split('@')[0] as string),
+                email: payload.email,
+                googleId: payload.sub,
+                password: '',
+            });
+        }
+    }
+
+    // Remove password before creating tokens
+    const { password, ...userPayload } = user;
+    const { accessToken, refreshToken } = signJWTs(userPayload);
+
+    return { accessToken, refreshToken, user: userPayload };
 };
