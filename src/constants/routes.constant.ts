@@ -1,21 +1,27 @@
 export const ROUTES = {
-    // health and system
+    // Health and system
     HEALTH: 'health',
     READY: '/ready',
     API_DOCS: '/api-docs',
 
-    // base API paths
+    // Base API paths
     API: {
         BASE: '/api',
         V1: '/api/v1',
     },
 
-    // authentication
+    // Authentication
     AUTH: {
         BASE: '/auth',
         LOGIN: '/login',
         REGISTER: '/register',
         REFRESH: '/refresh',
+    },
+
+    // External api
+    EXTERNAL_API: {
+        BASE: '/external-apis',
+        WIKIPEDIA: '/wikipedia',
     },
 } as const;
 

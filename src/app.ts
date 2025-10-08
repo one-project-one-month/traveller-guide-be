@@ -25,6 +25,7 @@ import {
 } from './middlewares/rate-limit.middleware';
 import { requestTimeout } from './middlewares/request-timeout.middleware';
 import authRouter from './routes/auth.routes';
+import externalApiRouter from './routes/external-api.routes';
 import logger from './utils/logger';
 
 // App
@@ -91,9 +92,7 @@ const setupParsingMiddlewares = (app: Express) => {
     app.use(cookieParser());
 };
 
-const setupCustomMiddlewares = (app: Express) => {
-    console.log(typeof app);
-};
+const setupCustomMiddlewares = (_: Express) => {};
 
 // Setup routes
 const setupRoutes = (app: Express) => {
@@ -102,6 +101,7 @@ const setupRoutes = (app: Express) => {
     app.use(ROUTES.API_DOCS, swaggerUi.serve, swaggerUi.setup(specs));
 
     app.use(ROUTES.API.V1 + ROUTES.AUTH.BASE, authRouter); // Auth router
+    app.use(ROUTES.API.V1 + ROUTES.EXTERNAL_API.BASE, externalApiRouter); // External API router
 };
 
 const setup404Handler = (app: Express) => {

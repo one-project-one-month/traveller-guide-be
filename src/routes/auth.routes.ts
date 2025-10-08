@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import { ROUTES } from '../constants/routes.constant';
 import {
     registerHandler,
     loginHandler,
@@ -7,7 +8,6 @@ import {
 } from '../controllers/auth.controller';
 import { validate } from '../middlewares/validate.middleware';
 import { loginSchema, registerSchema } from '../validators/auth.scehma';
-import { ROUTES } from '../constants/routes.constant';
 
 const authRouter = Router();
 

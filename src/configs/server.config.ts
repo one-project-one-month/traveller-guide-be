@@ -48,4 +48,7 @@ export const serverConfig = {
         'mistralai/Mixtral-8x7B-Instruct-v0.1',
     temperature: parseFloat(process.env['TEMPERATURE'] || '0.7'),
     maxTokens: parseInt(process.env['MAX_TOKENS'] ?? '1024'),
+
+    // External resources
+    wikipediaApiUrl: process.env['WIKIPEDIA_API_URL'],
 };

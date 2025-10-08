@@ -1,21 +1,22 @@
-import { NextFunction, Response, Request } from 'express';
+import type { NextFunction, Response, Request } from 'express';
 import HTTP_STATUS from 'http-status';
 
+import { refreshTokenCookieConfig } from '../configs/cookie.config';
+import { AUTH_MESSAGES } from '../constants/messages/auth.messages';
+import { STATUS_MESSAGES } from '../constants/messages/status.messages';
+import { AppError } from '../helpers/app-error';
 import { catchAsync } from '../helpers/catch-async';
 import { reIssueTokens } from '../services/auth.service';
 import * as authService from '../services/auth.service';
 import logger from '../utils/logger';
-import { AppError } from '../helpers/app-error';
-import { AUTH_MESSAGES } from '../constants/messages/auth.messages';
-import { STATUS_MESSAGES } from '../constants/messages/status.messages';
-import { refreshTokenCookieConfig } from '../configs/cookie.config';
+import type { LoginInput, RegisterInput } from '../validators/auth.scehma';
 
 /**
  * Registers a new user and returns tokens and user payload.
  * Logs registration event for auditing.
  */
 export const registerHandler = catchAsync(
-    async (req: Request, res: Response) => {
+    async (req: Request<unknown, unknown, RegisterInput>, res: Response) => {
         const {
             accessToken,
             refreshToken,
@@ -43,29 +44,34 @@ export const registerHandler = catchAsync(
  * Logs in a user, sets refresh token cookie, and returns tokens and user payload.
  * Logs login event for auditing.
  */
-export const loginHandler = catchAsync(async (req: Request, res: Response) => {
-    const {
-        accessToken,
-        refreshToken,
-        user: payload,
-    } = await authService.validateUserCredentials(
-        req.body.email,
-        req.body.password
-    );
-
-    res.cookie('refresh_token', refreshToken, refreshTokenCookieConfig);
-    res.status(HTTP_STATUS.OK).json({
-        status: STATUS_MESSAGES.SUCCESS,
-        message: AUTH_MESSAGES.LOGIN_SUCCESS,
-        data: {
+export const loginHandler = catchAsync(
+    async (req: Request<unknown, unknown, LoginInput>, res: Response) => {
+        const {
             accessToken,
             refreshToken,
             user: payload,
-        },
-    });
+        } = await authService.validateUserCredentials(
+            req.body.email,
+            req.body.password
+        );
 
-    logger.info({ userId: payload.id, email: payload.email }, 'User logged in');
-});
+        res.cookie('refresh_token', refreshToken, refreshTokenCookieConfig);
+        res.status(HTTP_STATUS.OK).json({
+            status: STATUS_MESSAGES.SUCCESS,
+            message: AUTH_MESSAGES.LOGIN_SUCCESS,
+            data: {
+                accessToken,
+                refreshToken,
+                user: payload,
+            },
+        });
+
+        logger.info(
+            { userId: payload.id, email: payload.email },
+            'User logged in'
+        );
+    }
+);
 
 /**
  * Issues a new access token (and refresh token if needed) from a valid refresh token.
