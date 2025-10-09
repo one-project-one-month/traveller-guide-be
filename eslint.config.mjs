@@ -8,6 +8,8 @@ export default [
     // Ignore patterns
     {
         ignores: [
+            'eslint.config.mjs',
+            'scripts/**',
             'dist/**',
             'node_modules/**',
             'src/generated/**',
@@ -20,6 +22,12 @@ export default [
 
     {
         languageOptions: {
+            parser: tseslint.parser,
+            parserOptions: {
+                project: ['./tsconfig.json'],
+                projectService: true,
+                tsconfigRootDir: import.meta.dirname,
+            },
             globals: {
                 ...globals.es2021,
                 ...globals.node,
@@ -38,9 +46,11 @@ export default [
 
     // Custom configs / overrides
     {
-        files: ['src/**/**/*.ts', 'esling.confg.mjs'],
+        files: ['src/**/*.ts', 'src/**/*.tsx'],
         languageOptions: {
+            parser: tseslint.parser,
             parserOptions: {
+                project: ['./tsconfig.json'],
                 projectService: true,
                 tsconfigRootDir: import.meta.dirname,
             },
