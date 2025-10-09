@@ -29,7 +29,10 @@ import externalApiRouter from './routes/external-api.routes';
 import logger from './utils/logger';
 
 // App
-export const createApp = () => {
+export const createApp = (): {
+    app: Express;
+    server: ReturnType<typeof createServer>;
+} => {
     const app = express();
     const server = createServer(app);
 

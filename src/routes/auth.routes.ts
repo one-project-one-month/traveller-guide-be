@@ -5,11 +5,12 @@ import {
     registerHandler,
     loginHandler,
     refreshTokensHandler,
+    googleLoginHandler,
 } from '../controllers/auth.controller';
 import { validate } from '../middlewares/validate.middleware';
 import { loginSchema, registerSchema } from '../validators/auth.scehma';
 
-const authRouter = Router();
+const authRouter: Router = Router();
 
 authRouter.post(
     ROUTES.AUTH.REGISTER,
@@ -17,6 +18,7 @@ authRouter.post(
     registerHandler
 );
 authRouter.post(ROUTES.AUTH.LOGIN, validate(loginSchema), loginHandler);
+authRouter.post(ROUTES.AUTH.GOOGLE_AUTH, googleLoginHandler);
 authRouter.post(ROUTES.AUTH.REFRESH, refreshTokensHandler);
 
 export default authRouter;

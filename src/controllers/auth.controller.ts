@@ -21,7 +21,14 @@ export const registerHandler = catchAsync(
             accessToken,
             refreshToken,
             user: payload,
-        } = await authService.createUserWithTokens(req.body);
+        } = await authService.createUserWithTokens(
+            req.body as {
+                name: string;
+                email: string;
+                password: string;
+                passwordConfirmation: string;
+            }
+        );
 
         res.status(HTTP_STATUS.CREATED).json({
             status: STATUS_MESSAGES.SUCCESS,
@@ -116,3 +123,35 @@ export const refreshTokensHandler = async (
         data: { ...newTokens },
     });
 };
+
+/**
+ * Handles Google login, returns tokens and user payload.
+ */
+export const googleLoginHandler = catchAsync(
+    async (req: Request, res: Response) => {
+        const { idToken } = req.body as { idToken: string };
+
+        if (!idToken) {
+            throw new AppError(
+                'Google ID token is required',
+                HTTP_STATUS.BAD_REQUEST
+            );
+        }
+
+        const { accessToken, refreshToken, user } =
+            await authService.loginWithGoogle(idToken);
+
+        res.cookie('refresh_token', refreshToken, refreshTokenCookieConfig);
+
+        res.status(HTTP_STATUS.OK).json({
+            status: STATUS_MESSAGES.SUCCESS,
+            message: 'Login successful via Google',
+            data: { accessToken, refreshToken, user },
+        });
+
+        logger.info(
+            { userId: user.id, email: user.email },
+            'User logged in via Google'
+        );
+    }
+);

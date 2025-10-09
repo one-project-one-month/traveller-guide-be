@@ -16,6 +16,7 @@ export const ROUTES = {
         LOGIN: '/login',
         REGISTER: '/register',
         REFRESH: '/refresh',
+        GOOGLE_AUTH: '/google',
     },
 
     // External api

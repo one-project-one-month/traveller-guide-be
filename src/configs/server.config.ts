@@ -51,4 +51,5 @@ export const serverConfig = {
 
     // External resources
     wikipediaApiUrl: process.env['WIKIPEDIA_API_URL'],
+    googleClientId: process.env['GOOGLE_CLIENT_ID'],
 };
