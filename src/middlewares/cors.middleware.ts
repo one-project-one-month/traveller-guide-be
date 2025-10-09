@@ -1,4 +1,5 @@
 import cors from 'cors';
+
 import { serverConfig } from '../configs/server.config';
 
 const corsOptions = {

@@ -1,4 +1,5 @@
-import { CookieOptions } from 'express';
+import type { CookieOptions } from 'express';
+
 import { serverConfig } from './server.config';
 
 export const refreshTokenCookieConfig: CookieOptions = {

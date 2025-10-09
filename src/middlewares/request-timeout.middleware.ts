@@ -1,8 +1,9 @@
-import { NextFunction, Request, Response } from 'express';
-import logger from '../utils/logger';
+import type { NextFunction, Request, Response } from 'express';
+import HTTP_STATUS from 'http-status';
+
 import { SYSTEM_MESSAGES } from '../constants/messages/system.messages';
 import { AppError } from '../helpers/app-error';
-import HTTP_STATUS from 'http-status';
+import logger from '../utils/logger';
 
 export const requestTimeout = (
     req: Request,

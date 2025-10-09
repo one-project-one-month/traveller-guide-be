@@ -1,15 +1,15 @@
-import { NextFunction, Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import HTTP_STATUS from 'http-status';
-
-import logger from '../utils/logger';
-import { AppError } from '../helpers/app-error';
-import { serverConfig } from '../configs/server.config';
 import { ZodError } from 'zod';
-import { PrismaError } from '../constants/prisma-error.constant';
-import { SYSTEM_MESSAGES } from '../constants/messages/system.messages';
+
+import { serverConfig } from '../configs/server.config';
 import { AUTH_MESSAGES } from '../constants/messages/auth.messages';
-import { STATUS_MESSAGES } from '../constants/messages/status.messages';
 import { ERROR_MESSAGES } from '../constants/messages/error.messages';
+import { STATUS_MESSAGES } from '../constants/messages/status.messages';
+import { SYSTEM_MESSAGES } from '../constants/messages/system.messages';
+import { PrismaError } from '../constants/prisma-error.constant';
+import { AppError } from '../helpers/app-error';
+import logger from '../utils/logger';
 
 // TODO: create error name constants
 
@@ -39,29 +39,22 @@ export type KnownError =
     | Error;
 
 // Type guards
-const isAppError = (err: KnownError): err is AppError => {
-    return err instanceof AppError;
-};
+const isAppError = (err: KnownError): err is AppError =>
+    err instanceof AppError;
 
-const isErrorWithCode = (err: KnownError): err is ErrorWithCode => {
-    return 'httpCode' in err || 'statusCode' in err;
-};
+const isErrorWithCode = (err: KnownError): err is ErrorWithCode =>
+    'httpCode' in err || 'statusCode' in err;
 
-const isPrismaError = (err: KnownError): err is PrismaError => {
-    return err.name === 'PrismaClientKnownRequestError';
-};
+const isPrismaError = (err: KnownError): err is PrismaError =>
+    err.name === 'PrismaClientKnownRequestError';
 
-const isJWTError = (err: KnownError): err is JWTError => {
-    return [
-        'JsonWebTokenError',
-        'TokenExpiredError',
-        'NotBeforeError',
-    ].includes(err.name);
-};
+const isJWTError = (err: KnownError): err is JWTError =>
+    ['JsonWebTokenError', 'TokenExpiredError', 'NotBeforeError'].includes(
+        err.name
+    );
 
-const isZodError = (err: KnownError): err is ZodError => {
-    return err instanceof ZodError;
-};
+const isZodError = (err: KnownError): err is ZodError =>
+    err instanceof ZodError;
 
 // Helper function to ensure we always have an AppError instance
 const ensureAppError = (err: KnownError): AppError => {
@@ -86,9 +79,8 @@ const ensureAppError = (err: KnownError): AppError => {
     );
 };
 
-const handleJWTError = (): AppError => {
-    return new AppError(AUTH_MESSAGES.TOKEN_INVALID, HTTP_STATUS.UNAUTHORIZED);
-};
+const handleJWTError = (): AppError =>
+    new AppError(AUTH_MESSAGES.TOKEN_INVALID, HTTP_STATUS.UNAUTHORIZED);
 
 const handlePrismaClientKnownRequestError = (err: PrismaError): AppError => {
     if (err.code === PrismaError.UniqueConstraintViolation && err.meta) {
@@ -182,7 +174,7 @@ export const errorHandler = (
     err: KnownError,
     _req: Request,
     res: Response,
-    /* eslint-disable @typescript-eslint/no-unused-vars */
+
     _next: NextFunction
 ) => {
     logger.error(

@@ -1,7 +1,8 @@
-import multer from 'multer';
-import { Request } from 'express';
-import { AppError } from '../helpers/app-error';
+import type { Request } from 'express';
 import HTTP_STATUS from 'http-status';
+import multer from 'multer';
+
+import { AppError } from '../helpers/app-error';
 
 // TODO: refactor this middlware properly
 
@@ -28,8 +29,8 @@ const fileFilter = (
 };
 
 const upload = multer({
-    storage: storage,
-    fileFilter: fileFilter,
+    storage,
+    fileFilter,
     limits: {
         fileSize: 5 * 1024 * 1024, // 5MB limit
     },
