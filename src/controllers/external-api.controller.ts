@@ -4,6 +4,7 @@ import HTTP_STATUS from 'http-status';
 import { EXTERNAL_API_MESSAGES } from '../constants/messages/external-api-messages';
 import { STATUS_MESSAGES } from '../constants/messages/status.messages';
 import { catchAsync } from '../helpers/catch-async';
+import * as spoonacularService from '../services/spoonacular.service';
 import { wikipediaService } from '../services/wikipedia.service';
 
 /**
@@ -26,6 +27,27 @@ export const searchWikipediaHandler = catchAsync(
             data: {
                 ...result,
             },
+        });
+    }
+);
+
+/**
+ * Handles search requests to the Spoonacular API.
+ * Fetches recipe data based on query parameters and returns formatted results.
+ */
+export const searchSpoonacularHandler = catchAsync(
+    async (
+        req: Request<unknown, unknown, { foodName: string }>,
+        res: Response
+    ) => {
+        const result = await spoonacularService.searchFoodReceipe(
+            req.body.foodName
+        );
+
+        res.status(HTTP_STATUS.OK).json({
+            status: STATUS_MESSAGES.SUCCESS,
+            message: EXTERNAL_API_MESSAGES.SPOONACULAR_SEARCH_SUCCESS,
+            data: result,
         });
     }
 );

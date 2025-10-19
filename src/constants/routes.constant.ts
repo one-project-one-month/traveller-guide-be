@@ -23,6 +23,7 @@ export const ROUTES = {
     EXTERNAL_API: {
         BASE: '/external-apis',
         WIKIPEDIA: '/wikipedia',
+        SPOONACULAR: '/spoonacular',
     },
 } as const;
 

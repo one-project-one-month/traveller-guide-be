@@ -50,6 +50,14 @@ export const serverConfig = {
     maxTokens: parseInt(process.env['MAX_TOKENS'] ?? '1024'),
 
     // External resources
-    wikipediaApiUrl: process.env['WIKIPEDIA_API_URL'],
+
+    // Wikipedia
+    wikipediaApiUrl: process.env['WIKIPEDIA_API_URL'] || '',
+
+    // Spoonacular
+    spoonacularApiUrl: process.env['SPOONACULAR_API_URL'] || '',
+    spoonacularApiKey: process.env['SPOONACULAR_API_KEY'],
+
+    // Google
     googleClientId: process.env['GOOGLE_CLIENT_ID'],
 };
